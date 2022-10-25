@@ -1,0 +1,181 @@
+
+
+~ == Home
+
+$ == path end
+
+~/Y_E_@_S_E_EN/SEU/CSE3032/Folder1$
+
+
+
+clear
+
+pwd
+
+ls 
+
+ls -A  
+
+mkdir Folder1
+
+cd Folder1
+
+cd ..
+
+mkdir child number three
+mkdir child\ number\ three
+
+mkdir my tree\speaks as\ if\ Ididn
+
+mkdir a\'b 
+mkdir a\*b
+mkdir a\\b
+
+rmdir my
+
+rm abc.txt 
+
+
+
+mkdir a b c d e f g h i j
+rmdir a b c d e f h g j i
+
+rm -r childOfFolder1
+
+
+==========*************
+
+nano abc.txt
+
+If you want to write something, then type what you want to write at this step. 
+
+Press ctrl+X
+
+Type 'y'
+
+Press 'Enter' Button 
+==========*************
+
+
+mv abc.txt LocationToMove
+mv full_path_of_SOURCE_FILE    full_path_where_to_move
+
+
+To rename a file::
+mv abc.txt superman.txt
+
+
+cp abc.txt LocationToMove
+cp full_path_of_SOURCE_FILE    full_path_where_to_move
+
+
+
+cat superman.txt 
+
+cat -n superman.txt
+
+cat -e superman.txt 
+
+cat -ne superman.txt
+
+
+
+cat batman.txt superman.txt > batmanvssuperman.txt
+
+To append something:: use '>>' 
+cat wonderwoman.txt >> batmanvssuperman.txt  
+
+
+
+* == all files in a folder 
+cat *
+
+To print the lines number:  wc -l filename
+
+To print the words number: wc -w filename
+
+To print the chracters number: wc -m filename
+
+To print the bytes number: wc -c filename
+
+wc -lwmc file name
+
+
+
+cat filename | wc -lwmc
+
+cat * | wc -lwmc
+
+
+-o == only matched part will be portrayed 
+-i == case insensetive
+-w == only for matched WORD
+
+grep -oi 'c' batman.txt | wc -w
+
+
+grep -owi 'man' batman.txt | wc -w
+
+
+head -n 3 superman.txt | grep -o 'o' | wc -w
+
+tail -n 3 superman.txt | grep -o 'o' | wc -w
+
+
+{grep -ow 'ASUS' batman.txt && grep -owi 'ASUS' superman.txt } | wc -w
+
+
+
+
+{ head -n 7 abc.txt | grep -oi 'ASUS' && tail -n 19 superman.txt | grep -o 'ASUS'} | wc -w
+
+
+
+chmod 774 filename
+
+
+
+chmod -R 744 folderName
+
+
+
+Find the number of occurences of 'man' in the first 10 lines of superman.txt file. 
+
+
+
+r = read; 
+
+w = write
+
+x = execute
+
+
+
+
+owner's power groups power general users' power 
+
+Laptop : Owner 
+
+sudo = super user is doing 
+
+
+
+Group A---- Group B
+
+
+General users 
+
+
+110 100 110
+
+646
+
+
+
+
+
+
+
+
+
+

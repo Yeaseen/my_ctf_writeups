@@ -1,0 +1,110 @@
+---------------------------level0 -->
+
+to connect with the remote level0 server
+ssh bandit0@bandit.labs.overthewire.org -p 2220
+
+pass: bandit0
+
+ls
+ls -la
+
+(there are many files, and run the following command line to get to know
+which file contains ASCII character that means human readable
+{} means the outputs of what the find command found )
+
+
+find . -type f -exec file {} + | grep ASCII
+
+cat readme
+NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL
+
+//this is pass for level1
+
+exit
+
+=============================level1
+ssh bandit1@bandit.labs.overthewire.org -p 2220
+
+ls
+
+// just go to the prev directory
+cd ..
+cat bandit1/-
+rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi
+
+
+=============================level2
+ssh bandit2@bandit.labs.overthewire.org -p 2220
+
+ls -la
+
+file contains spaces, so put a '\' before every space.
+
+cat spaces\ in\ this\ filename
+
+aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG
+
+
+=============================leve3
+ssh bandit3@bandit.labs.overthewire.org -p 2220
+
+ls -la
+cd inhere
+ls -la
+cat .hidden
+
+2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe
+
+
+=============================leve4
+ssh bandit4@bandit.labs.overthewire.org -p 2220
+
+ls
+cd inhere
+ls -la
+
+(there are many files, and run the following command line to get to know
+which file contains ASCII character that means human readable)
+
+find . -type f -exec file {} + | grep ASCII
+
+>> -file07
+
+but it starts with a '-' which is a start of a flag sign in command line
+tricky one
+
+so, two dashes in a row mean the end of flag sign.
+don't forget to put a '\' before the dash of the filename
+
+cat -- \-file07
+
+lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR
+
+===============================level5
+ssh bandit5@bandit.labs.overthewire.org -p 2220
+
+cd inhere
+ls
+
+here, 1033c == 1033 bytes
+
+find . \
+	-type f \
+	-size 1033c	\
+	-not -executable \
+	-exec file {} + \
+	| grep ASCII
+
+>> ./maybehere07/.file2: ASCII text, with very long lines (1000)
+
+cat maybehere07/.file2
+
+P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU
+
+
+
+
+
+
+
+
