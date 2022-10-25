@@ -59,8 +59,28 @@ JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
 ---------------------------level12
 ssh bandit12@bandit.labs.overthewire.org -p 2220
 
+move the data.txt to tmp/myname123/whatever
 
+xxd -r data.txt > data
 
+check the file data type, 
+file data
 
+if it is zipped(bz2) 
+mv data data.bz2
+bzip2 -d data.bz2 
 
+//for gz()
+mv data data.gz
+gzip -d data.gz
 
+//for tar()
+mv data data.tar
+tar -xvf data.tar 
+
+mv data data.bz2
+bzip2 -d data.bz2 
+
+again check the file type until it is ASCII:
+
+wbWdlBxEir4CaE8LaPhauuOo6pwRmrDw
