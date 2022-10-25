@@ -16,7 +16,7 @@ which file contains ASCII character that means human readable
 find . -type f -exec file {} + | grep ASCII
 
 cat readme
-NH2SXQwcBdpmTEzi3bvBHMM9H66vVXjL
+
 
 //this is pass for level1
 
@@ -30,7 +30,7 @@ ls
 // just go to the prev directory
 cd ..
 cat bandit1/-
-rRGizSaX8Mk1RTb1CNQoXTcYZWU6lgzi
+
 
 
 =============================level2
@@ -42,7 +42,7 @@ file contains spaces, so put a '\' before every space.
 
 cat spaces\ in\ this\ filename
 
-aBZ0W5EmUfAf7kHTQeOwd8bauFJ2lAiG
+
 
 
 =============================leve3
@@ -53,7 +53,7 @@ cd inhere
 ls -la
 cat .hidden
 
-2EW7BBsr6aMMoJ2HjW067dm8EgX26xNe
+
 
 
 =============================leve4
@@ -78,7 +78,7 @@ don't forget to put a '\' before the dash of the filename
 
 cat -- \-file07
 
-lrIWWI6bB37kxfiCQZqUdOIYfr6eEeqR
+
 
 ===============================level5
 ssh bandit5@bandit.labs.overthewire.org -p 2220
@@ -99,7 +99,7 @@ find . \
 
 cat maybehere07/.file2
 
-P4L4vucdmLnm8I7Vl7jG1ApGSfjYKqJU
+
 
 
 

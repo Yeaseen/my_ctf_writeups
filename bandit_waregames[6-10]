@@ -1,5 +1,63 @@
 ---------------------------level6
+ssh bandit6@bandit.labs.overthewire.org -p 2220
 
+the file is anywhere in the server.
+
+cd /
+ls
+find . -type f -user bandit7 -group bandit6 -size 33c -exec file {} + | grep ASCII
+
+this will give alot of unnecessary messages which are not output at all: 
+try following command where 2>/dev/null dumps all the messages.
+
+
+find . -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null -exec file {} + | grep ASCII
+
+>> ./var/lib/dpkg/info/bandit7.password: ASCII text
+
+cat ./var/lib/dpkg/info/bandit7.password
+
+
+---------------------------level7
+ssh bandit7@bandit.labs.overthewire.org -p 2220
+
+
+grep -wi 'millionth' data.txt
+
+
+
+---------------------------level8
+ssh bandit8@bandit.labs.overthewire.org -p 2220
+
+man uniq 
+
+uniq needs sorted data
+
+cat data.txt | sort | uniq -u
+
+
+---------------------------level9
+ssh bandit9@bandit.labs.overthewire.org -p 2220
+
+strings data.txt | grep -wi '=='
+
+
+---------------------------level10
+ssh bandit10@bandit.labs.overthewire.org -p 2220
+
+cat data.txt | base64 --decode
+
+---------------------------level11
+ssh bandit11@bandit.labs.overthewire.org -p 2220
+
+cat data.txt
+
+go to rot13.com to decode the text in data.txt the pass
+
+JVNBBFSmZwKKOP0XbFXOoW8chDz5yVRv
+
+---------------------------level12
+ssh bandit12@bandit.labs.overthewire.org -p 2220
 
 
 
