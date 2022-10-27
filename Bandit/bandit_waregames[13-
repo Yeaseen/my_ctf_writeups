@@ -1,0 +1,30 @@
+---------------------------level13
+ssh bandit13@bandit.labs.overthewire.org -p 2220
+
+Here you will get a private key.
+Store it in key.txt in your loacal machine
+
+nano key.txt
+chmod 600 key.txt
+
+ssh -i key.txt bandit14@bandit.labs.overthewire.org -p 2220
+
+baam!!!
+
+you are on bandit14!!
+
+----------------------------level14
+
+the info is mentioned in level13
+Now you need the pass of level 14 which is in /etc/bandit_pass/bandit14
+
+then you need to connect to localhost:30000 (localhost of bandit14), then just put the pass, hit enter.
+
+Or,
+
+cat /etc/bandit_pass/bandit14 | nc localhost 30000
+
+bandit15-->jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
+
+-----------------------------level15
+ssh bandit15@bandit.labs.overthewire.org -p 2220
