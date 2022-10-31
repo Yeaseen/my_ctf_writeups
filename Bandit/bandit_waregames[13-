@@ -28,3 +28,26 @@ bandit15-->jN2kgmIXJ6fShzhT2avhotn4Zcka6tnt
 
 -----------------------------level15
 ssh bandit15@bandit.labs.overthewire.org -p 2220
+
+here you need to do the previous task, but in an ssl manner:
+
+openssl s_client -ign_eof -connect localhost:30001
+
+
+JQttfApK4SeyHwDlI9SXGR50qclOAil1
+
+-----------------------------level16
+ssh bandit16@bandit.labs.overthewire.org -p 2220
+
+
+
+
+
+
+
+
+
+
+
+
+
