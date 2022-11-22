@@ -53,7 +53,7 @@ nmap -p 31000-32000 localhost
 
 Or
 
-openssl s_client -ign_eof -connect localhost:31790
+/etc/bandit_pass/bandit16 | openssl s_client -ign_eof -connect localhost:31790
 
 -----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEAvmOkuifmMg6HL2YPIOjon6iWfbp7c3jx34YkYWqUH57SUdyJ
