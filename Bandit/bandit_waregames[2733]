@@ -1,0 +1,189 @@
+YnQpBuifNMas1hcUFk70ZmqkhUU2EuaS
+
+-----------------------------level27
+ssh bandit27@bandit.labs.overthewire.org -p 2220
+
+you can't clone the git repo on bandit27'd home.
+
+create a folder in /tmp
+
+mkdir foo
+
+cd /tmp/foo
+
+bandit27@bandit:/tmp/foo$ git clone ssh://bandit27-git@localhost/home/bandit27-git/repo
+
+Previous line will not work. You have to specify port no which is 2220 as bandits are active on this port
+
+bandit27@bandit:/tmp/foo$ git clone ssh://bandit27-git@localhost:2220/home/bandit27-git/repo
+
+cd repo
+ls 
+cat README
+
+
+AVanL161y9rsbcJIsFHuw35rjaOM19nR
+
+-----------------------------level28
+ssh bandit28@bandit.labs.overthewire.org -p 2220
+
+
+create a random file in /tmp directory.
+
+bandit28@bandit:~$ mktemp -d
+/tmp/tmp.HAO1TDw8TO
+cd /tmp/tmp.HAO1TDw8TO
+bandit28@bandit:/tmp/tmp.HAO1TDw8TO$ git clone ssh://bandit28-git@localhost:2220/home/bandit28-git/repo
+ls
+cd repo
+
+
+bandit28@bandit:/tmp/tmp.HAO1TDw8TO/repo$ git status
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+
+bandit28@bandit: cat README.me
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: xxxxxxxxxx
+
+wow password is xxxxx which is useless now. But what was there intially is important. you can find it from the previous commits.
+
+bandit28@bandit: git log 
+
+commit 43032edb2fb868dea2ceda9cb3882b2c336c09ec (HEAD -> master, origin/master, origin/HEAD)
+Author: Morla Porla <morla@overthewire.org>
+Date:   Thu Sep 1 06:30:25 2022 +0000
+
+    fix info leak
+
+commit bdf3099fb1fb05faa29e80ea79d9db1e29d6c9b9
+Author: Morla Porla <morla@overthewire.org>
+Date:   Thu Sep 1 06:30:25 2022 +0000
+
+    add missing data
+
+commit 43d032b360b700e881e490fbbd2eee9eccd7919e
+Author: Ben Dover <noone@overthewire.org>
+Date:   Thu Sep 1 06:30:24 2022 +0000
+
+    initial commit of README.md
+
+now that 'fix info leak' commit seems interesting, see what was fixed in that commit
+
+bandit28@bandit:/tmp/tmp.HAO1TDw8TO/repo$ git show 43032edb2fb868dea2ceda9cb3882b2c336c09ec
+
+commit 43032edb2fb868dea2ceda9cb3882b2c336c09ec (HEAD -> master, origin/master, origin/HEAD)
+Author: Morla Porla <morla@overthewire.org>
+Date:   Thu Sep 1 06:30:25 2022 +0000
+
+    fix info leak
+
+diff --git a/README.md b/README.md
+index b302105..5c6457b 100644
+--- a/README.md
++++ b/README.md
+@@ -4,5 +4,5 @@ Some notes for level29 of bandit.
+ ## credentials
+ 
+ - username: bandit29
+-- password: tQKvmcwNYcFS6vmPHIUSI3ShmsrQZK8S
++- password: xxxxxxxxxx
+
+
+tQKvmcwNYcFS6vmPHIUSI3ShmsrQZK8S
+
+-----------------------------level29
+ssh bandit29@bandit.labs.overthewire.org -p 2220
+
+download the git repo first, just like previous level. DON'T FORGET TO PUT THE PORT NUMBER
+
+bandit29@bandit:/tmp/tmp.gLklDEvFBc$ git clone ssh://bandit29-git@localhost:2220/home/bandit29-git/repo
+
+cd repo
+
+git log and git status all are ok.. there's no leak.
+BUT, there might other branches that leaks the info
+
+bandit29@bandit:/tmp/tmp.gLklDEvFBc/repo$ git branch -a
+
+you might see there is another branch 'dev'
+
+bandit29@bandit:/tmp/tmp.gLklDEvFBc/repo$ git checkout dev
+
+bandit29@bandit:/tmp/tmp.gLklDEvFBc/repo$ ls
+code  README.md
+
+But both have nothing. We might guess that the leak is in the initial commits
+
+bandit29@bandit:/tmp/tmp.gLklDEvFBc/repo$ git log
+bandit29@bandit:/tmp/tmp.gLklDEvFBc/repo$ git show 2b1395f00cfb986163082c50100be5be8f249f64
+
+
+xbhV3HpNGlTIdnjUrdAlPzc2L6y9EOnS
+
+-----------------------------level30
+ssh bandit30@bandit.labs.overthewire.org -p 2220
+
+bandit30@bandit:/tmp/tmp.DywL2LwOM5$ git clone ssh://bandit30-git@localhost:2220/home/bandit30-git/repo
+
+git status, git diff, git diff --stage, git branch -a all of them are useless here.
+
+
+Git tagging is a way to mark specific points in the history of the repository. One example would be to mark release points of the software. The command to see the tags is git tag. 
+
+To create a tag the command is git tag -a <tag_name> -m <"tag description/message">. To see more details, like the tag message and commit, you can use the following command: git show <tag_name>.
+
+bandit30@bandit:/tmp/tmp.DywL2LwOM5/repo$ git tag
+secret
+bandit30@bandit:/tmp/tmp.DywL2LwOM5/repo$ git show secret
+
+OoffzGDlzhAlerFJ2cAiz1D41JW1Mhmt
+
+-----------------------------level31
+ssh bandit31@bandit.labs.overthewire.org -p 2220
+
+bandit31@bandit:~$ mktemp -d
+/tmp/tmp.3K2OxQOi3d
+bandit31@bandit:~$ cd /tmp/tmp.3K2OxQOi3d
+bandit31@bandit:/tmp/tmp.3K2OxQOi3d$ git clone ssh://bandit31-git@localhost:2220/home/bandit31-git/repo
+
+Just follow the instructions of the README file
+
+create a key.txt file, write the content, push to the origin from master branch.
+
+VOILA, after staging and commiting, you will see there's no change in the working tree.
+
+Then watch out the .gitignore guy, he is a cultprit. remove the content of the .gitignore file.
+then add, commit, push.
+
+rmCBvG56y58BXzv98yZGdO7ATVL5dW8y
+
+-----------------------------level32
+ssh bandit32@bandit.labs.overthewire.org -p 2220
+
+
+
+So everything we type seems to be made uppercase which is not the usual case in terminal shell.
+
+The only things in Linux that are uppercase is variables. Specifically, the variable $0 has a reference to a shell. You can see this with echo $0 on your machine.
+
+$whoami
+bandit33
+
+wow, that means this sh is owned by bandit33
+so print the pass form etc/bandit_pass/bandit33
+
+$cat /etc/bandit_pass/bandit33
+odHo63fHiFqcWWJG9rLiLDtPm45KzUKy
+
+
+voila! this is the last level and to check whether you are correct or not, try to log in to bandit33
+-----------------------------level33
+ssh bandit33@bandit.labs.overthewire.org -p 2220
