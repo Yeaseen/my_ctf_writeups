@@ -419,3 +419,68 @@ sed '12,$d' filename.txt
 sed '/abc/d' filename.txt
 
 ```
+
+## Nwtworking
+
+```bash
+ip addr
+ip a
+ip link
+ip addr show eth0
+
+#This command will show the DNS server(s) configured on your system.
+cat /etc/resolv.conf
+
+#This command will display the routing table, which includes information about how network traffic is directed.
+ip route
+
+#This command will show the MAC address of your Ethernet interface.
+ip link show eth0
+
+#This command will provide detailed information about the specified Ethernet interface, including IP addresses, MAC address, DNS servers, and more.
+nmcli device show eth0
+
+```
+
+## connecting to wifi from linux terminal
+
+```bash
+#For Linux
+#Say, wlan0 is down
+sudo ifconfig wlan0 up
+nmcli radio wifi
+#if diseabled
+nmacli radio wifi on
+
+nmcli dev wifi list
+#Or
+sudo iw wlan0 scan | grep SSID
+
+sudo nmcli --ask dev wifi connect <SSID>
+ping www.google.com
+
+#lists all the available interfaces.
+nmcli con show
+nmcli con show --active
+
+
+
+```
+
+# Explaining the `lshw -C network` Command
+
+## Overview
+
+The `lshw` command is a hardware information tool available on Linux systems. When used with the `-C` flag followed by a specific class (in this case, `network`), it provides detailed information about the network hardware on your system.
+
+## Command Syntax
+
+```bash
+lshw -C network
+
+#lshw: This is the main command for listing hardware information.
+#-C network: The -C flag specifies the class of hardware you want information about, and in this case, it's set to network.
+
+sudo ifup eth0
+sudo ifdown eth0
+```
