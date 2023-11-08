@@ -1,0 +1,50 @@
+Start here:
+
+Username: natas0
+Password: natas0
+URL: http://natas0.natas.labs.overthewire.org
+
+Go to View Page Source::
+
+L1: g9D9cREhslqBKtcA2uocGHPfMZVzeFK6
+
+=====================================================
+
+
+Just download the html file, kaBoom!!
+
+natas2: h4ubbcXrWqsTo7GGnnUMLppXbOogfBZ7
+
+=====================================================
+>Something Change?
+Relative path of Image to Concrete path
+
+go to index directory::  http://natas2.natas.labs.overthewire.org/files
+
+natas3: G6ctbMJ5Nb4cbFwhpMPSvxGHhQ7I6W8Q
+
+======================================================
+
+**GOOGLE(AS A BOT) CAN'T FIND THE FILE** why?
+
+Use dirbuster/gobuster to look for commonly found files, leading you to robots.txt file.
+
+gobuster -U natas3 -P G6ctbMJ5Nb4cbFwhpMPSvxGHhQ7I6W8Q -u http://natas3.natas.labs.overthewire.org/ -w /home/yeaseen/common.txt
+
+How to stop google from crawling:: robots.txt can help you hide specific folder
+
+
+natas4:tKOcJIbzM4lTs8hbCmzn5Zr4434fGZQm
+
+======================================================
+
+
+natas5:
+
+
+
+
+
+
+
+
