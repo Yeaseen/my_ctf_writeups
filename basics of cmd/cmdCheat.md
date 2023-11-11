@@ -9,6 +9,7 @@
 - `..`: Parent Directory
 - `./`: Current Directory
 - `*`: Wildcard (Matches any character or group of characters)
+- `*`: can also mean all the files and folders of current directory
 
 ### Example Path:
 
@@ -49,6 +50,21 @@ ls
 # List all files and folders (including hidden ones)
 ls -A
 
+#list all files and directories in the current directory and its subdirectories
+ls *
+
+#List all of the files in the current directory and all of its subdirectories that end in ".txt"
+ls */*txt
+
+#This will output a comprehensive set of information about the file "myfile.txt."
+stat abc.txt
+
+#In string format, %U represents the username of the file owner.
+stat --format "%U"
+
+#This would display a custom format with file name, size, owner, and group information.
+stat --format "File: %n Size: %s bytes Owner: %U Group: %G" abc.txt
+
 # Create a folder
 mkdir Folder1
 
@@ -78,6 +94,25 @@ rmdir a b c d e f h g j i
 
 #Recursively delete a folder and its children
 rm -r childOfFolder1
+
+#* == all files in a folder
+cat *
+ls *
+#: Copies all files and folders in the current directory to the specified destination.
+cp * destination_path
+
+
+#Run multiple cmds in a single line: first ls will execute, then date
+ls ; date
+
+#Run "date" if "ls" is successful
+ls && date
+
+#Run "date" if "ls" is not successful: date will not execute
+ls || date
+
+#Run "date" if "lk" is not successful: date will execute as "lk" command is failed
+lk || date
 ```
 
 # File manipulation
@@ -116,6 +151,10 @@ cat -e superman.txt
 
 # Display both line numbers and end-of-line characters
 cat -ne superman.txt
+
+#get the type of file
+file superman.txt
+
 ```
 
 # Text Manipulation
@@ -129,38 +168,102 @@ cat batman.txt superman.txt > batmanvssuperman.txt
 # Append content to a file
 cat wonderwoman.txt >> batmanvssuperman.txt
 
+
+#put standard output of the "ls -A" command to file.txt
+ls -A > file.txt
+
+#append standard output of the "cat file2.txt" command to file.txt
+cat file2.txt >> file.txt
+
+#Discard stdout of ls command
+ls > /dev/null
+
+#pipelining: the output of "ls -A" will be the input to "wc -l" command
+ls -A | wc -l
+
 # Print lines 10 to 15 of a file
 sed -n '10,15p' file1.txt
 
 # Append lines 10 to 15 of file1.txt to file2.txt
 sed -n '10,15p' file1.txt >> file2.txt
 
-#* == all files in a folder
-cat *
-ls *
-#: Copies all files and folders in the current directory to the specified destination.
-cp * destination_path
+#taking the contents of "data.txt," sorting them, and then keeping only the unique lines.
+cat data.txt | sort | uniq -u
+
+#extracting human-readable text from "data.txt" and searching for lines containing the exact string '==' in a case-insensitive manner
+strings data.txt | grep -wi '=='
+
+#decoding a Base64-encoded content from "data.txt" and revealing its original form
+cat data.txt | base64 --decode
+
+#Create Hex Dump from a File: This will display the hexadecimal representation along with ASCII characters of each byte in "data.txt."
+xxd data.txt
+
+#Create Hex Dump and Redirect to a File: Saves the hex dump of "data.txt" to a file named "hexdump.txt."
+xxd data.txt > hexdump.txt
+
+#Convert Hex Dump Back to Binary: Takes the hex dump from "hexdump.txt" and converts it back to binary, saving it as "original_data."
+xxd -r hexdump.txt > original_data
+
+#first create hexdump of abc.txt and feed it to xxd with -r option to print the orginal binary ouput
+xxd abc.txt | xxd -r
+
+#Hex Dump with Line Numbers: Displays hex dump with 8 bytes per line and includes line numbers.
+xxd -c 8 data.txt
+
+#Extracts the second field using a pipe (|) as the delimiter.
+echo "name|age|gender" | cut -d '|' -f 2
+
+#This extracts the first and third fields from a CSV file where commas (,) are the delimiters.
+cut -d ',' -f 1,3 file.csv
 ```
 
-## Word Count
+# Basic File Comparison: Difference using diff cmd
+
+```bash
+#Basic File Comparison:
+diff file1.txt file2.txt
+
+#Unified Diff Format: Provides a unified diff format, which is often easier to read and understand.
+diff -u file1.txt file2.txt
+
+#Recursive Directory Comparison:Compares files in "dir1" and "dir2" recursively.
+diff -r dir1 dir2
+
+#Ignores whitespace differences in the comparison.
+diff -w file1.txt file2.txt
+
+#Creates a patch file containing the differences between the two files.
+diff -u file1.txt file2.txt > my_patch.patch
+```
+
+# Word Count
 
 ```bash
 # Count lines, words, characters, and bytes in a file
 wc -lwmc filename
 
-# Count lines, words, and characters in a file but using parallelism
+# Count lines, words, and characters in a file but using pipelining
 cat filename | wc -lwmc
 
 # Count lines, words, and characters in all files in the current directory
 cat * | wc -lwmc
 ```
 
-## File Search
+# File Search
 
 ```bash
-# Find files with a specific name
-#here * is for pattern matching
+#find binary/source for command
+whereis ls
 
+
+#we want to search a file and want to avoid anything you haven't access to parts of the filesystem
+find / -name "index.html" 2>/dev/null
+find / -name "index.html" 2>&-
+
+
+# Find files with a specific name
+#here, . is for current directory * is for pattern matching
 find . -type f -name abc.txt
 find . -type f -name 'm*l.txt'
 find . -type f -iname 'p*m*l.*'
@@ -179,11 +282,26 @@ find . -type f -name "*.pdf" -exec rm -f {} \;
 
 # Display the content of all text files
 find . -type f -name "*.txt" -exec cat {} \; | wc -lw
+
+#to know which file contains ASCII character that means human readable
+find . -type f -exec file {} + | grep ASCII
+
+#to extract many things
+find . -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null -exec file {} + | grep ASCII
+
+#find non executable 1033bytes file and contains ASCII characters
+find .
+	-type f
+	-size 1033c
+	-not -executable
+  2>/dev/null
+	-exec file {} +
+	| grep ASCII
 ```
 
-### Searching Patterns
+# Searching Patterns
 
-# rg command
+## rg command
 
 ```bash
 #The rg command is a fast, ripgrep line-oriented search tool that recursively searches your current directory for a regex pattern.
@@ -224,7 +342,7 @@ rg "pattern" --ignore-file=skip.txt --ignore-dir=exclude_folder
 
 ```
 
-# Grep commands
+## Grep commands
 
 ```bash
 #-o == only matched part will be portrayed
@@ -256,7 +374,7 @@ head -n 7 superman.txt | grep -o 'man' | wc -l
 
 ```
 
-### Permissions and Operations
+# Permissions and Operations
 
 ```bash
 # Change file permissions
@@ -277,6 +395,30 @@ chmod -R 744 folderName
 
 #to give all permission
 chmod +x script.sh
+
+#Grants read (r) and write (w) permissions to the owner (u) of the directory.
+chmod -R u+rw folder
+
+#Remove read write and execute bits for "other" and "group" on all files in folder
+chmod -R og-rwx
+
+# Give other and group the same rights as user, but removing writing rights.
+chmod -R og=u-w folder
+
+#Sticky Bit (t): When the sticky bit is set on a directory, only the owner of a file within that directory can delete or rename the file. It's commonly used on directories like /tmp to prevent users from deleting or modifying each other's files.
+#Represented by a lowercase "t" in the "others" permission of the directory.
+chmod +t directory
+
+#setting the sticky bit on a directory for others (everyone else, not the owner).after running this command, the sticky bit will be set for others on the specified directory.
+chmod o+t folder
+
+#Setuid (s) and Setgid (s) Bits:
+#Setuid (s) and setgid (s) are special permissions that can be set on executable files.
+#Setuid: When set on an executable file, it runs with the privileges of the file owner.
+#Setgid: When set on an executable file, it runs with the privileges of the group owner of the file.
+#Represented by an uppercase "S" (if the corresponding execute bit is not set) or "s" (if the execute bit is set).
+chmod u+s executable_file   # Setuid
+chmod g+s executable_file   # Setgid
 ```
 
 # Process Commands Cheat Sheet
@@ -299,9 +441,11 @@ pgrep 'chrome' | wc -w
 #List process IDs based on the current user name.
 pgrep -u whoami
 
-#Signal processes based on a pattern in the command line.
-pkill -f "java app"
+#Kill process with name java
+pkill -f "java"
 
+#Kill all processes with names beginning java
+killall "java"
 ```
 
 ## Process Management
@@ -417,12 +561,13 @@ sed '12,$d' filename.txt
 
 # Delete pattern matching line
 sed '/abc/d' filename.txt
-
 ```
 
 ## Nwtworking
 
 ```bash
+#Check whether you have any network connection
+ping 8.8.8.8
 ip addr
 ip a
 ip link
@@ -440,6 +585,8 @@ ip link show eth0
 #This command will provide detailed information about the specified Ethernet interface, including IP addresses, MAC address, DNS servers, and more.
 nmcli device show eth0
 
+#This command adds a default route to the system's routing table. A default route is used when there is no specific route for a destination IP address. In this case, any traffic that doesn't match a more specific route will be directed to the next hop specified by the IP address 192.168.56.10.
+sudo ip route add default via 192.168.56.10
 ```
 
 ## connecting to wifi from linux terminal
@@ -462,9 +609,6 @@ ping www.google.com
 #lists all the available interfaces.
 nmcli con show
 nmcli con show --active
-
-
-
 ```
 
 # Explaining the `lshw -C network` Command
@@ -481,6 +625,115 @@ lshw -C network
 #lshw: This is the main command for listing hardware information.
 #-C network: The -C flag specifies the class of hardware you want information about, and in this case, it's set to network.
 
-sudo ifup eth0
-sudo ifdown eth0
+sudo ifup <logical_name_of_interface>
+sudo ifdown <logical_name_of_interface>
+```
+
+# Netcat (nc) Command Examples
+
+## 1. Basic Usage - Listening on a Port
+
+- `l`: Listen mode, for inbound connections.
+- `p` 1234: Specifies the port to listen on (replace 1234 with your desired port).
+- `v`: verbose mode, i.e., Display more information about the connection.
+
+```bash
+nc -lvp 1234
+```
+
+## 2. Basic Usage - Connecting to a Host and Port
+
+```bash
+#Connects to the host at IP address 10.0.2.5 on port 1234.
+nc 10.0.2.5 1234
+
+#Listens on port 1234 and saves the received data to a file named received_file.txt.
+nc -l -p 1234 > received_file.txt
+
+#Connects to the host at IP address 10.0.2.5 on port 1234 and sends the contents of file_to_send.txt.
+nc 10.0.2.5 1234 < file_to_send.txt
+```
+
+# Scanning a network with netstat and nmap:
+
+```bash
+#, displays active network connections on your system, focusing on listening (-l), port number(-n), TCP (-t) and UDP (-u) connections. Handy for checking what ports are in use and who's knocking on your network door.
+netstat -lntu
+
+#Basic Scan: Performs a basic scan on the specified target IP address.
+nmap target_ip
+
+#cans only the specified ports (80 and 443 in this case) on the target IP.
+nmap -p 80,443 target_ip
+
+#Service Version Detection: Attempts to detect service versions running on open ports.
+nmap -sV target_ip
+
+#Tries to identify the operating system of the target.
+nmap -O target_ip
+
+#Scans multiple targets.
+nmap target1_ip target2_ip
+
+#you're scanning ports 31000 to 32000 on your own machine
+nmap -p 31000-32000 localhost
+
+#Excludes a specific IP address from the scan.
+nmap target_ip --exclude excluded_ip
+```
+
+# Extract and Create zip files
+
+```bash
+#To extract tar.gz archive. -x: Extract files from an archive. -z: Decompress the archive using gzip. -v: Verbose mode, showing the files being extracted. -f: Specify the archive file name.
+tar -xvzf archive.tar.gz
+
+#To extract tar.bz2 archive
+tar -xvjf archive.tar.bz2
+
+#To extract tar archive
+tar -xvf archive.tar
+
+#To create archive; -c: Create a new archive. -z: Compress the archive using gzip. -v: Verbose mode, showing the files being archived.-f: Specify the archive file name.
+tar -cvzf archive.tar.gz /file_or_folder/to/archive
+
+#This command creates a zip file named archive.zip containing file1.txt, file2.txt, and the contents of the folder/ directory.
+zip archive.zip file1.txt file2.txt folder/
+
+#This command extracts the contents of archive.zip into the current directory.
+unzip archive.zip
+
+#This will extract the contents of archive.zip into the specified destination directory.
+unzip archive.zip -d /path/to/destination/
+```
+
+### Special Commands
+
+```bash
+#Show system and kernel
+uname -a
+
+#show system date time
+date
+
+#to get current date and time: 2023-11-11_11-11-27
+echo $(date +'%Y-%m-%d_%H-%M-%S')
+
+#show uptime
+uptime
+
+#Show mounted file system
+mount
+
+#After running following command, the files and directories on the device /dev/sdb1 will be accessible under the /mnt/mydisk directory.
+sudo mount /dev/sdb1 /mnt/mydisk
+
+#to print all the prev commands from bash history file
+history
+
+#run a prev command from histrory
+!<the line_number_of_command_from_history_command>
+
+#Show enviro­nment variables
+env
 ```
