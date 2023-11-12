@@ -20,8 +20,8 @@
 ### Variables
 
 ```bash
-seu@seu:~/Documents/YAT_OS/first_D$ abc=7
-seu@seu:~/Documents/YAT_OS/first_D$ echo "$abc"
+abc=7
+echo "$abc"
 7
 ```
 
@@ -187,9 +187,6 @@ sed -n '10,15p' file1.txt
 # Append lines 10 to 15 of file1.txt to file2.txt
 sed -n '10,15p' file1.txt >> file2.txt
 
-#taking the contents of "data.txt," sorting them, and then keeping only the unique lines.
-cat data.txt | sort | uniq -u
-
 #extracting human-readable text from "data.txt" and searching for lines containing the exact string '==' in a case-insensitive manner
 strings data.txt | grep -wi '=='
 
@@ -218,7 +215,7 @@ echo "name|age|gender" | cut -d '|' -f 2
 cut -d ',' -f 1,3 file.csv
 ```
 
-# Basic File Comparison: Difference using diff cmd
+# Basic File Comparison and Similarities: Difference using diff cmd
 
 ```bash
 #Basic File Comparison:
@@ -235,6 +232,25 @@ diff -w file1.txt file2.txt
 
 #Creates a patch file containing the differences between the two files.
 diff -u file1.txt file2.txt > my_patch.patch
+
+#taking the contents of "data.txt," sorting them, and then keeping only the unique lines.
+cat data.txt | sort | uniq -u
+
+#frequencies per line of a txt file
+sort abc.txt | uniq -c
+
+#In order to sort the output with the most frequent lines on top, you can do the following
+sort abc.txt | uniq -c | sort -nr
+
+#to get only duplicate lines, most frequent first:
+sort abc.txt | uniq -cd | sort -nr
+
+#Say, you have two files and you want to get the actual content of the common lines:
+#-F treats the patterns as fixed strings, -x matches whole lines, and -f specifies the file with the patterns.
+grep -Fxf <(sort abc.txt) <(sort def.txt)
+
+#you can also use comm command to get the same output as well
+comm -12 <(sort abc.txt) <(sort def.txt)
 ```
 
 # Word Count
@@ -736,4 +752,13 @@ history
 
 #Show enviro­nment variables
 env
+
+sudo reboot
+
+sudo shutdown -h now
+
+sudo poweroff
+
+logout
+
 ```
