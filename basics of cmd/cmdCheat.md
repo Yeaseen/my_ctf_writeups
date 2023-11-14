@@ -17,7 +17,7 @@
 ### Example Path:
 
 ```bash
-~/Y_E_@_S_E_EN/SEU/CSE3032/Folder1$
+~/Y_E_@_S_E_EN/CSE3032/Folder1$
 ```
 
 ### Variables
@@ -327,6 +327,43 @@ find .
   2>/dev/null
 	-exec file {} +
 	| grep ASCII
+
+
+#find files with the 777 permissions (files readable, writable, and executable by all users)
+find / -type f -perm 0777
+
+#find executable files
+find / -perm a=x
+
+#find all files under user under /home
+find /home -user whoami
+
+#files that were modified in the last 10 days
+find / -mtime 10
+
+#files that were accessed in the last 10 day
+find / -atime 10
+
+#files changed within the last hour (60 minutes)
+find / -cmin -60
+
+#files accesses within the last hour (60 minutes)
+find / -amin -60
+
+#This command can also be used with (+) and (-) signs to specify a file that is larger or smaller than the given size. 
+find / -size +100M -type f 2>/dev/null
+find / -size -100M -type f 2>/dev/null
+
+#find world-writable folders
+find / -perm -o w -type d 2>/dev/null
+
+#find world-executable folders
+find / -perm -o w -type d 2>/dev/null
+find / -name gcc*
+
+#Find files with the SUID bit, which allows us to run the file with a higher privilege level than the current user.
+find / -perm -u=s -type f 2>/dev/null
+
 ```
 
 # Searching Patterns
@@ -389,11 +426,10 @@ tail -n 3 superman.txt | grep -o 'o' | wc -w
 # Combined Grep
 { grep -ow 'ASUS' batman.txt && grep -owi 'ASUS' superman.txt } | wc -w
 
-#Q. Find the number of the occurences of 'man' in the first seven lines of the superman.txt file.
+#Q0. Find the number of the occurences of 'man' in the first seven lines of the superman.txt file.
 head -n 7 superman.txt | grep -o 'man' | wc -l
 
-#Q1. Write a command line that can print the frequencies of a string that starts with ‘p’
-and ends with ‘t’ in the last 20 lines of abc.txt file and the first seven
+#Q1. Write a command line that can print the frequencies of a string that starts with ‘p’ and ends with ‘t’ in the last 20 lines of abc.txt file and the first seven
 lines of pqr.txt file. [Use regex]
 
 { tail -n 20 abc.txt | grep -oi 'p*t' && head -n 7 superman.txt | grep -o 'p*t'} | wc -w
@@ -456,6 +492,12 @@ chmod g+s executable_file   # Setgid
 ## Display Process Information
 
 ```bash
+#View all running processes
+ps -A
+
+#View process tree (see the tree formation until ps axjf is run below)
+ps axjf
+
 #Display information about active processes.
 ps -ef
 
@@ -550,7 +592,7 @@ what
 #For permanent change, append the alias to .bashrc
 ```
 
-## Find & Replace with Sed
+# Find & Replace with Sed
 
 ```bash
 # Basic find and replace
@@ -654,8 +696,8 @@ lshw -C network
 
 #lshw: This is the main command for listing hardware information.
 #-C network: The -C flag specifies the class of hardware you want information about, and in this case, it's set to network.
-
 sudo ifup <logical_name_of_interface>
+
 sudo ifdown <logical_name_of_interface>
 ```
 
@@ -732,10 +774,33 @@ curl -O -L -r https://example.com
 
 # Scanning a network with netstat and nmap:
 
+### netstat
+
 ```bash
 #, displays active network connections on your system, focusing on listening (-l), port number(-n), TCP (-t) and UDP (-u) connections. Handy for checking what ports are in use and who's knocking on your network door.
 netstat -lntu
 
+#-l: list ports listening and -t for tcp listeners
+netstat -lt
+
+#list network usage statistics by protocol (below) This can also be used with the -t or -u options to limit the output to a specific protocol. 
+netstat -s
+
+#statustics for tcp protocol channels
+netstat -st
+
+#list connections with the service name and PID information.
+netstat -tp
+
+#Shows interface statistics
+netstat -i
+
+#-a:Dsiplay all sockets; -n:Don't resolve names; -o:Display timers
+netstat -ano
+```
+### nmap 
+
+```bash
 #Basic Scan: Performs a basic scan on the specified target IP address.
 nmap target_ip
 
@@ -786,8 +851,29 @@ unzip archive.zip -d /path/to/destination/
 # Special Commands
 
 ```bash
-#Show system and kernel
+#Will print system information giving us additional detail about the kernel used by the system
 uname -a
+
+#The proc filesystem (procfs) provides information about the target system processes
+cat /proc/version
+
+#info about OS
+cat /etc/issue
+
+#The sudo -l command can be used to list all commands your user can run using sudo.
+sudo -l
+
+#The id command will provide a general overview of the user’s privilege level and group memberships.
+id
+
+#Reading the /etc/passwd file can be an easy way to discover users on the system. 
+cat /etc/passwd
+
+#just print all user names as well system or service users
+cat /etc/passwd | cut -d ":" -f 1
+
+#to get the user names only as oftentimes, they will be under home directory 
+cat /etc/passwd | grep home | cut -d ":" -f 1
 
 #show system date time
 date
