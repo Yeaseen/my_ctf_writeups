@@ -912,7 +912,7 @@ logout
 for file in *.jpg; do mv "$file" "newprefix_$file"; done
 ```
 
-# File Transfer between two machines using python server
+# In the same network,(Host and Virtual Oses) File Transfer between two machines using python server
 
 ```bash
 #Start the HTTP server on the machine with the file you want to share:
@@ -925,6 +925,52 @@ wget http://<SERVER_IP>/<file_name>
 #Access the server from another machine:
 #Open a web browser on the second machine and enter the IP address or hostname of the first machine, followed by the port number.
 http://<SERVER_IP>:80
+```
+
+# SSH-ing
+```bash
+#Connecting to a remote/another machine
+ssh -p <PORT> username@ip_addr
+
+#Set-up client for SSH-ing to host
+#Step-1: Generate a public-private key pair
+mkdir ~/.ssh
+cd .ssh
+ssh-keygen -t rsa -b 4096 -o -a 100
+chmod 600 *
+#Step-2: Copy your public key to host's ~/.ssh/authorized_keys file
+#The following command connects to the specified remote host as the specified user
+#Put the user's password on the remote host PC
+ssh-copy-id <username>@<hostname>
+
+
+
+#-->How to modify default SSH port 22 to something new: change in SSH configuration file
+nano /etc/ssh/sshd_config
+#Look for the line that starts with Port. It will specify the port number that SSH is configured to use.
+#Change it by replacing 22 with your NEW_PORT
+Port <NEW_PORT>
+service ssh restart
+```
+
+# Copy files between two different network remotely
+```bash
+#copy file(s) from the host to your client (note the capital -P)
+scp -P <PORT> username@host_ip_addr:path_to_src local_dest
+
+#copy file(s) from your client to the host (note the capital -P)
+scp -P <PORT> local_src username@host_ip_addr:path_to_dest
+```
+
+# Linux Firewall Command [iptables]
+```bash
+#Check Current Rules:
+iptables -L
+
+#Flush all Rules, effectively turning off the firewall
+iptables -F
+
+
 ```
 
 # What sfter getting access to a machine?
